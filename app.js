@@ -5,13 +5,15 @@ const appConfig = require("./api/config/appConfig");
 
 const indexRouter = require("./bin");
 const usersRouter = require("./api/routes/users");
+const authRouter = require("./api/auth/auth-router");
 
 const app = express();
 
 appConfig(app);
 
 app.use("/", indexRouter);
-app.use("/users", usersRouter);
+app.use("/api", usersRouter);
+app.use("/api", authRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
@@ -25,8 +27,9 @@ app.use(function(err, req, res, next) {
   res.locals.error = req.app.get("env") === "development" ? err : {};
 
   // render the error page
-  res.status(err.status || 500);
-  res.render("error");
+  res
+    .status(err.status || 500)
+    .json(`WHY THE HELL DID I RECIEVE A ${err.status} ERROR`);
 });
 
 module.exports = app;
