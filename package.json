@@ -1,6 +1,8 @@
 {
   "name": "node-auth3-project",
   "version": "1.1.0",
+  "description": "Node Auth3 Project Starter Code",
+  "main": "index.js",
   "scripts": {
     "start": "node ./bin/www",
     "server": "nodemon",
