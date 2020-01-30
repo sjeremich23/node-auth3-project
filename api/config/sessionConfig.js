@@ -4,12 +4,11 @@ const KnexSessionStore = require("connect-session-knex")(session);
 const dbConnection = require("../../database/dbConfig");
 
 module.exports = {
-  name: "trackpad life",
+  name: "cookieMonster",
   // secret is used for cookie encryption
-  secret:
-    process.env.SESSION_SECRET || "monsoon demons are messing with my gutters",
+  secret: process.env.SESSION_SECRET || "keep it secret, keep it safe!",
   cookie: {
-    maxAge: 1000 * 60 * 60, // 1 hour
+    maxAge: 1000 * 60 * 10, // 10 minutes in ms
     secure: false, // set to true in production, only send cookies over HTTPS
     httpOnly: true // JS cannot access the cookies on the browser
   },
