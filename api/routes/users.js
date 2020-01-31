@@ -1,22 +1,34 @@
 const router = require("express").Router();
-const bcrypt = require("bcryptjs");
 
 const Users = require("../models/users");
 
-// @route   POST /api/register
-// @desc    Register new user
-// @access  Public
-router.post("/register", (req, res) => {
-  const user = req.body;
-  const hash = bcrypt.hashSync(user.password, 10);
-  user.password = hash;
+// @route   GET /api/users
+// @desc    Login user
+// @access  Private
+router.get("/", (req, res) => {
+  const { id } = req.token;
+  console.log("hi");
 
-  Users.add(user)
-    .then(saved => {
-      res.status(201).json(saved);
+  Users.findById(id)
+    .then(user => {
+      console.log("test");
+
+      if (user) {
+        console.log(user);
+
+        Users.findByDepartment(user.department)
+          .then(users => {
+            res.status(200).json(users);
+          })
+          .catch(err => {
+            res.status(500).json({ err, error: "Error getting users" });
+          });
+      } else {
+        res.status(404).json({ error: "No users found" });
+      }
     })
     .catch(err => {
-      res.status(500).json(err);
+      res.status(500).json({ err, error: "Error getting users" });
     });
 });
 

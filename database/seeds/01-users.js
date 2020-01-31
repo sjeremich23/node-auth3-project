@@ -3,7 +3,7 @@ exports.seed = function(knex) {
     .truncate()
     .then(function() {
       return knex("users").insert([
-        { id: 1, username: "Shane", password: "pass", department: "Finance" }
+        { id: 1, username: "Jake", password: "pass", department: "Finance" }
       ]);
     });
 };

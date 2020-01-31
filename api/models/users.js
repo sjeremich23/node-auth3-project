@@ -4,23 +4,9 @@ module.exports = {
   add,
   find,
   findBy,
-  findById
+  findById,
+  findByDepartment
 };
-
-function find() {
-  return db("users").select("id", "username");
-}
-
-function findBy(filter) {
-  return db("users")
-    .select("id", "username", "password")
-    .where(filter);
-}
-
-// async function add(user) {
-//   const [id] = await db("users").insert(user);
-//   return findById(id);
-// }
 
 function add(user) {
   return db("users")
@@ -31,9 +17,25 @@ function add(user) {
     });
 }
 
+function find() {
+  return db("users").select("id", "username", "department");
+}
+
+function findBy(filter) {
+  return (
+    db("users")
+      // .select("id", "username", "password")
+      .where(filter)
+  );
+}
+
 function findById(id) {
   return db("users")
-    .select("id", "username")
+    .select("id", "username", "department")
     .where({ id })
     .first();
+}
+
+function findByDepartment(department) {
+  return db("users").where({ department });
 }

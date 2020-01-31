@@ -2,23 +2,38 @@ const router = require("express").Router();
 
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
-require("dotenv").config();
-
-const { jwtSecret } = require("../../config/secrets");
-const restricted = require("../../middlewares/restricted");
 const Users = require("../models/users");
 
-// @route   POST /login
+const validateLogin = require("../../middlewares/validateLogin");
+
+// @route   POST /api/auth/register
 // @desc    Login user
-// @access  Private
-router.post("/login", restricted, (req, res) => {
+// @access  Public
+router.post("/register", (req, res) => {
+  const user = req.body;
+  const hash = bcrypt.hashSync(user.password, 10);
+  user.password = hash;
+
+  Users.add(user)
+    .then(saved => {
+      res.status(201).json(saved);
+    })
+    .catch(err => {
+      res.status(500).json(err);
+    });
+});
+
+// @route   POST /api/auth/login
+// @desc    Login user
+// @access  Public
+router.post("/login", validateLogin, (req, res) => {
   const { username, password } = req.body;
 
   Users.findBy({ username })
     .first()
     .then(user => {
       if (user && bcrypt.compareSync(password, user.password)) {
-        const token = getJwtToken(user.username);
+        const token = getJwtToken(user);
 
         res
           .status(200)
@@ -32,16 +47,17 @@ router.post("/login", restricted, (req, res) => {
     });
 });
 
-function getJwtToken(username) {
+function getJwtToken(user) {
   const payload = {
-    username
+    username: user.username,
+    id: user.id
   };
 
   const options = {
     expiresIn: "1h"
   };
 
-  return jwt.sign(payload, jwtSecret, options);
+  return jwt.sign(payload, process.env.JWT_SECRET, options);
 }
 
 module.exports = router;
